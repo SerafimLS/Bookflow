@@ -3,11 +3,12 @@ import { FlatList, Alert, View, Dimensions, Modal } from 'react-native';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme';
+import AdminBottomNavBar from '../components/AdminBottomNavBar';
 import { getAllLivros, deleteLivro } from '../services/database';
 
 const { width } = Dimensions.get('window');
-// Calcula para 3 colunas, descontando paddings
-const cardWidth = (width - 48 - 32) / 3; 
+// Calcula para 2 colunas, descontando paddings
+const cardWidth = (width - 48 - 16) / 2; 
 
 // ─── Styled Components ────────────────────────────────────────────────────────
 
@@ -250,7 +251,7 @@ export default function AdminProductListScreen({ navigation }) {
         <BackBtn onPress={() => navigation.goBack()}>
            <Ionicons name="arrow-back" size={24} color={theme.colors.white} />
         </BackBtn>
-        <HeaderTitleText>Pedidos</HeaderTitleText>
+        <HeaderTitleText>Produtos</HeaderTitleText>
       </HeaderGroup>
 
       <Content>
@@ -268,7 +269,7 @@ export default function AdminProductListScreen({ navigation }) {
             data={livros}
             keyExtractor={item => String(item.id)}
             renderItem={renderItem}
-            numColumns={3}
+            numColumns={2}
             columnWrapperStyle={{ justifyContent: 'space-between' }}
             showsVerticalScrollIndicator={false}
           />
@@ -291,7 +292,7 @@ export default function AdminProductListScreen({ navigation }) {
           </ModalBox>
         </Overlay>
       </Modal>
-
+      <AdminBottomNavBar active="document" navigation={navigation} />
     </Screen>
   );
 }

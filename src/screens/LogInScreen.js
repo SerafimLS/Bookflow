@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Color, Border, FontSize, FontFamily } from "../styles/GlobalStyles";
+import { theme } from "../theme";
 
 export default function LogInScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -17,7 +19,11 @@ export default function LogInScreen({ navigation }) {
   const handleLogin = () => {
     console.log({ email, senha });
 
-    navigation.replace("Home");
+    if (email.toLowerCase().includes("admin")) {
+      navigation.replace("AdminDashboard");
+    } else {
+      navigation.replace("Home");
+    }
   };
 
   return (
@@ -37,7 +43,7 @@ export default function LogInScreen({ navigation }) {
           style={styles.input}
           value={senha}
           onChangeText={setSenha}
-          secureTextEntry
+          secureTextEntry={true}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -50,7 +56,7 @@ export default function LogInScreen({ navigation }) {
 
         <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
           <Text style={styles.link}>
-            Já possui uma conta?{" "}
+            Não possui uma conta?{" "}
             <Text style={styles.linkBold}>Cadastre-se</Text>
           </Text>
         </TouchableOpacity>
@@ -62,7 +68,7 @@ export default function LogInScreen({ navigation }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: Color.colorSteelblue,
+    backgroundColor: theme.colors.primary,
   },
 
   container: {
@@ -82,7 +88,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: FontFamily.poppinsBold,
-    color: Color.colorSteelblue,
+    color: theme.colors.primary,
     textAlign: "center",
     marginBottom: 20,
   },
@@ -94,14 +100,15 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: Color.colorWhitesmoke,
+    backgroundColor: theme.colors.inputBg,
     borderRadius: Border.br_15,
     padding: 12,
     marginBottom: 15,
   },
 
+
   button: {
-    backgroundColor: Color.colorSteelblue,
+    backgroundColor: theme.colors.primary,
     borderRadius: 50,
     padding: 15,
     alignItems: "center",
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
   },
 
   linkBold: {
-    color: Color.colorSteelblue,
+    color: theme.colors.primary,
     fontWeight: "bold",
   },
 });

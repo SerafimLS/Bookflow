@@ -3,6 +3,7 @@ import { FlatList, Alert, View, Modal, KeyboardAvoidingView, Platform } from 're
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme';
+import AdminBottomNavBar from '../components/AdminBottomNavBar';
 import { getAllCategorias } from '../services/database';
 
 // ─── Styled Components ────────────────────────────────────────────────────────
@@ -296,6 +297,7 @@ export default function AdminCategoryListScreen({ navigation }) {
           </KeyboardAvoidingView>
         </Overlay>
       </Modal>
+      <AdminBottomNavBar active="document" navigation={navigation} />
     </Screen>
   );
 }

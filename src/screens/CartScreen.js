@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { theme } from "../theme";
 
 export default function CartScreen({ navigation }) {
   const [cartItems, setCartItems] = useState([
@@ -111,7 +112,7 @@ export default function CartScreen({ navigation }) {
               <Ionicons
                 name={produto.selecionado ? "checkbox" : "square-outline"}
                 size={22}
-                color="#7FA6B6"
+                color={theme.colors.primary}
               />
             </TouchableOpacity>
 
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#7FA6B6",
+    borderColor: theme.colors.primary,
     borderRadius: 8,
     paddingHorizontal: 10,
     gap: 10,
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
   qtyButton: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#7FA6B6",
+    color: theme.colors.primary,
   },
 
   qtyText: {

@@ -167,9 +167,7 @@ export default function SearchScreen({ navigation }) {
   }, [query, doSearch]);
 
   const handleBuy = (book) => {
-    navigation.navigate('OrderConfirmation', {
-      itens: [{ livro_id: book.id, titulo: book.titulo, quantidade: 1, preco_unitario: book.preco }],
-    });
+    navigation.navigate('BookDetails', { book });
   };
 
   const renderItem = ({ item }) => (

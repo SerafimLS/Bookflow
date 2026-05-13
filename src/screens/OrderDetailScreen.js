@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Modal, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { getPedidoItens } from "../services/database";
+import { theme } from "../theme";
 
 const Screen = styled.SafeAreaView`
   flex: 1;
@@ -10,7 +11,7 @@ const Screen = styled.SafeAreaView`
 
 const Header = styled.View`
   height: 65px;
-  background-color: #b7dea4;
+  background-color: ${theme.colors.primary};
   justify-content: center;
   padding-left: 52px;
 `;
@@ -27,7 +28,7 @@ const Content = styled.ScrollView`
 `;
 
 const Title = styled.Text`
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 28px;
   font-weight: 800;
   text-align: center;
@@ -45,7 +46,7 @@ const InfoItem = styled.View`
 `;
 
 const InfoLabel = styled.Text`
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 16px;
   font-weight: bold;
 `;
@@ -71,14 +72,14 @@ const TableHeader = styled.View`
 
 const HeaderProduct = styled.Text`
   flex: 1.2;
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 15px;
   font-weight: bold;
 `;
 
 const HeaderQuantity = styled.Text`
   flex: 1;
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 15px;
   font-weight: bold;
   text-align: center;
@@ -86,7 +87,7 @@ const HeaderQuantity = styled.Text`
 
 const HeaderValue = styled.Text`
   flex: 1.3;
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 15px;
   font-weight: bold;
   text-align: center;
@@ -184,7 +185,7 @@ const BottomTotal = styled.View`
 `;
 
 const BottomLabel = styled.Text`
-  color: #4f789f;
+  color: ${theme.colors.primary};
   font-size: 28px;
   font-weight: 800;
 `;
@@ -193,6 +194,41 @@ const BottomValue = styled.Text`
   color: #222222;
   font-size: 28px;
   font-weight: 500;
+`;
+
+const ModalOverlay = styled.TouchableOpacity`
+  flex: 1;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalBox = styled.View`
+  width: 80%;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+`;
+
+const ModalTitle = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: ${theme.colors.primary};
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const StatusOption = styled.TouchableOpacity`
+  padding: 15px;
+  border-bottom-width: 1px;
+  border-bottom-color: #eee;
+`;
+
+const StatusText = styled.Text`
+  font-size: 16px;
+  text-align: center;
+  color: ${props => props.active ? theme.colors.primary : '#333'};
+  font-weight: ${props => props.active ? 'bold' : 'normal'};
 `;
 
 const MOCK_ITENS = [
@@ -220,7 +256,7 @@ const MOCK_ITENS = [
 ];
 
 export default function OrderDetailScreen({ route, navigation }) {
-  const { order } =
+  const { order, isAdmin } =
     route.params || {
       order: {
         id: 1,
@@ -228,10 +264,14 @@ export default function OrderDetailScreen({ route, navigation }) {
         total: 97,
         criado_em: "01/09/2024",
       },
+      isAdmin: false
     };
 
   const [itens, setItens] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(order.status || "Concluído");
+  const [modalVisible, setModalVisible] = useState(false);
+  const statusList = ["Pendente", "Em Processamento", "Enviado", "Concluído"];
 
   const loadItens = useCallback(async () => {
     try {
@@ -282,7 +322,13 @@ export default function OrderDetailScreen({ route, navigation }) {
 
           <InfoItem>
             <InfoLabel>Status</InfoLabel>
-            <InfoValue>{order.status || "Concluído"}</InfoValue>
+            {isAdmin ? (
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <InfoValue style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}>{status}</InfoValue>
+              </TouchableOpacity>
+            ) : (
+              <InfoValue>{status}</InfoValue>
+            )}
           </InfoItem>
         </InfoRow>
 
@@ -294,7 +340,7 @@ export default function OrderDetailScreen({ route, navigation }) {
           </TableHeader>
 
           {loading ? (
-            <ActivityIndicator color="#4f789f" />
+            <ActivityIndicator color={theme.colors.primary} />
           ) : (
             itens.map((item, index) => (
               <ProductRow key={`${item.id}-${index}`}>
@@ -363,6 +409,20 @@ export default function OrderDetailScreen({ route, navigation }) {
         <BottomLabel>Valor</BottomLabel>
         <BottomValue>{formatMoney(totalFinal)}</BottomValue>
       </BottomTotal>
+
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <ModalOverlay activeOpacity={1} onPress={() => setModalVisible(false)}>
+          <ModalBox onStartShouldSetResponder={() => true}>
+            <ModalTitle>Alterar Status</ModalTitle>
+            {statusList.map((s) => (
+              <StatusOption key={s} onPress={() => { setStatus(s); setModalVisible(false); }}>
+                <StatusText active={status === s}>{s}</StatusText>
+              </StatusOption>
+            ))}
+          </ModalBox>
+        </ModalOverlay>
+      </Modal>
+
     </Screen>
   );
 }

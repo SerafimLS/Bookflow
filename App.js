@@ -34,6 +34,7 @@ import OrderConfirmationScreen from "./src/screens/OrderConfirmationScreen";
 import AdminProductListScreen from "./src/screens/AdminProductListScreen";
 import AdminProductFormScreen from "./src/screens/AdminProductFormScreen";
 import AdminCategoryListScreen from "./src/screens/AdminCategoryListScreen";
+import AdminOrderListScreen from "./src/screens/AdminOrderListScreen";
 
 const Stack = createStackNavigator();
 
@@ -98,6 +99,10 @@ export default function App() {
           <Stack.Screen
             name="AdminCategoryList"
             component={AdminCategoryListScreen}
+          />
+          <Stack.Screen
+            name="AdminOrderList"
+            component={AdminOrderListScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>

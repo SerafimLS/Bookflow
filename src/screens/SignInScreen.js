@@ -8,8 +8,10 @@ import {
   Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Ionicons } from "@expo/vector-icons";
 import { createUsuario } from "../services/database";
 import { Color, Border, FontSize, FontFamily } from "../styles/GlobalStyles";
+import { theme } from "../theme";
 
 export default function SignInScreen({ navigation }) {
   const [nome, setNome] = useState("");
@@ -18,10 +20,31 @@ export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
+  const handleCpfChange = (text) => {
+    let value = text.replace(/\D/g, "");
+    if (value.length > 11) value = value.slice(0, 11);
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    setCpf(value);
+  };
+
+  const handleDateChange = (text) => {
+    let value = text.replace(/\D/g, "");
+    if (value.length > 8) value = value.slice(0, 8);
+    value = value.replace(/(\d{2})(\d)/, "$1/$2");
+    value = value.replace(/(\d{2})(\d)/, "$1/$2");
+    setDataNascimento(value);
+  };
+
   const handleCadastro = async () => {
     try {
-      if (!nome || !email) {
-        Alert.alert("Atenção", "Preencha nome e e-mail.");
+      if (!nome || !email || !senha) {
+        Alert.alert("Atenção", "Preencha nome, e-mail e senha.");
+        return;
+      }
+      if (senha.length < 8) {
+        Alert.alert("Atenção", "A senha deve ter no mínimo 8 caracteres.");
         return;
       }
 
@@ -48,13 +71,21 @@ export default function SignInScreen({ navigation }) {
         <TextInput style={styles.input} value={nome} onChangeText={setNome} />
 
         <Text style={styles.label}>CPF</Text>
-        <TextInput style={styles.input} value={cpf} onChangeText={setCpf} />
+        <TextInput 
+          style={styles.input} 
+          value={cpf} 
+          onChangeText={handleCpfChange} 
+          keyboardType="numeric"
+          maxLength={14}
+        />
 
         <Text style={styles.label}>Data de Nascimento</Text>
         <TextInput
           style={styles.input}
           value={dataNascimento}
-          onChangeText={setDataNascimento}
+          onChangeText={handleDateChange}
+          keyboardType="numeric"
+          maxLength={10}
         />
 
         <Text style={styles.label}>E-mail</Text>
@@ -65,11 +96,18 @@ export default function SignInScreen({ navigation }) {
           style={styles.input}
           value={senha}
           onChangeText={setSenha}
-          secureTextEntry
+          secureTextEntry={true}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleCadastro}>
           <Text style={styles.buttonText}>Cadastrar-se</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("LogIn")}>
+          <Text style={[styles.label, { textAlign: "center", marginTop: 20, color: "#666" }]}>
+            Já possui uma conta?{" "}
+            <Text style={{ color: theme.colors.primary, fontWeight: "bold" }}>Entrar</Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>
@@ -79,7 +117,7 @@ export default function SignInScreen({ navigation }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: Color.colorSteelblue,
+    backgroundColor: theme.colors.primary,
   },
   container: {
     flexGrow: 1,
@@ -100,7 +138,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: FontFamily.poppinsBold,
-    color: Color.colorSteelblue,
+    color: theme.colors.primary,
     textAlign: "center",
     marginBottom: 20,
   },
@@ -110,13 +148,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
-    backgroundColor: Color.colorWhitesmoke,
+    backgroundColor: theme.colors.inputBg,
     borderRadius: Border.br_15,
     padding: 12,
     marginBottom: 15,
   },
   button: {
-    backgroundColor: Color.colorSteelblue,
+    backgroundColor: theme.colors.primary,
     borderRadius: 50,
     padding: 15,
     alignItems: "center",

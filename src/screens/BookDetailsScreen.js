@@ -6,11 +6,14 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BottomNavBar from "../components/BottomNavBar";
+import { theme } from "../theme";
 
 export default function BookDetailsScreen({ navigation }) {
+  const [modalVisible, setModalVisible] = React.useState(false);
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -33,7 +36,9 @@ export default function BookDetailsScreen({ navigation }) {
           <Text style={styles.title}>A Hipótese do Amor</Text>
 
           {/* AVALIAÇÃO */}
-          <Text style={styles.rating}>★★★★★</Text>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.rating}>★★★★★ <Text style={{ fontSize: 12, color: theme.colors.primary }}>(Ver avaliações)</Text></Text>
+          </TouchableOpacity>
 
           {/* PREÇO + ÍCONES */}
           <View style={styles.priceRow}>
@@ -56,22 +61,37 @@ export default function BookDetailsScreen({ navigation }) {
             amor são postas à prova.
           </Text>
 
-          {/* BOTÕES */}
           <TouchableOpacity
-            style={styles.outlineButton}
+            style={[styles.outlineButton, { borderColor: theme.colors.primary }]}
             onPress={() => navigation.navigate("Cart")}
           >
-            <Text style={styles.outlineText}>Adicionar ao carrinho</Text>
+            <Text style={[styles.outlineText, { color: theme.colors.primary }]}>Adicionar ao carrinho</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}
             onPress={() => navigation.navigate("Cart")}
           >
             <Text style={styles.primaryText}>Comprar agora</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Modal de Avaliações */}
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Avaliações</Text>
+            <ScrollView style={{ maxHeight: 300 }}>
+              <Text style={{ marginBottom: 10, fontStyle: 'italic' }}>"Livro excelente! Recomendo a todos." - João</Text>
+              <Text style={{ marginBottom: 10, fontStyle: 'italic' }}>"Muito envolvente desde a primeira página." - Maria</Text>
+            </ScrollView>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}>
+              <Text style={styles.primaryText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* NAVBAR FIXA */}
       <BottomNavBar navigation={navigation} />
@@ -85,7 +105,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    backgroundColor: "#7FA6B6",
+    backgroundColor: theme.colors.primary,
     height: 140,
     paddingTop: 60,
     paddingHorizontal: 20,
@@ -155,20 +175,20 @@ const styles = StyleSheet.create({
   outlineButton: {
     marginTop: 20,
     borderWidth: 2,
-    borderColor: "#7FA6B6",
+    borderColor: theme.colors.primary,
     borderRadius: 50,
     padding: 15,
     alignItems: "center",
   },
 
   outlineText: {
-    color: "#7FA6B6",
+    color: theme.colors.primary,
     fontWeight: "600",
   },
 
   primaryButton: {
     marginTop: 10,
-    backgroundColor: "#7FA6B6",
+    backgroundColor: theme.colors.primary,
     borderRadius: 50,
     padding: 15,
     alignItems: "center",
@@ -177,5 +197,22 @@ const styles = StyleSheet.create({
   primaryText: {
     color: "#fff",
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    minHeight: 300,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
   },
 });
